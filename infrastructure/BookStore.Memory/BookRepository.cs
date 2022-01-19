@@ -18,14 +18,14 @@ namespace BookStore.Memory
          
         public List<Book> GetAllByTitleAndAuthor(string query)
         {
-            List<Book> foundBooks = new List<Book>(books);
+            var foundBooks = new List<Book>();
 
-            if (query != null)
+            if (query == null)
             {
-                foundBooks = books.Where(book => book.Author.Contains(query) 
-                          || book.Title.Contains(query))
-                            .ToList();
+                return foundBooks;
             }
+
+            foundBooks = books.Where(book => book.Title.Contains(query) || book.Author.Contains(query)).ToList();
 
             return foundBooks;
         }
