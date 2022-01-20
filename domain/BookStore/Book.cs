@@ -26,7 +26,7 @@ namespace BookStore
 
         internal static bool IsIsbn(string query)
         {
-            if(query == null)
+            if (query == null)
             {
                 return false;
             }

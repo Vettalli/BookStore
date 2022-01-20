@@ -15,17 +15,17 @@ namespace BookStore.Memory
         {
             return books.Where(book => book.Isbn == isbn).ToList();
         }
-         
-        public List<Book> GetAllByTitleAndAuthor(string query)
+
+        public List<Book> GetAllByTitleAndAuthor(string titleAndAuthor)
         {
             var foundBooks = new List<Book>();
 
-            if (query == null)
+            if (titleAndAuthor == null)
             {
                 return foundBooks;
             }
 
-            foundBooks = books.Where(book => book.Title.Contains(query) || book.Author.Contains(query)).ToList();
+            foundBooks = books.Where(book => book.Author.Contains(titleAndAuthor) || book.Title.Contains(titleAndAuthor)).ToList();
 
             return foundBooks;
         }

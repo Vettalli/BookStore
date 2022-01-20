@@ -28,14 +28,13 @@ namespace BookStore.Test
         public void GetAllByQuery_WithTitleOrAuthor_CallsGetByTitleOrAuthor()
         {
             var bookRepositoryStub = new Mock<IBookRepository>();
-            bookRepositoryStub.Setup(x => x.GetAllByTitleAndAuthor(It.IsAny<string>())).Returns(new List<Book> { new Book(2,"","","")});
+            bookRepositoryStub.Setup(x=>x.GetAllByTitleAndAuthor(It.IsAny<string>())).Returns(new List<Book> { new Book(2, "", "", "") });
 
+            var query = "srlg";
             var bookService = new BookService(bookRepositoryStub.Object);
-            var query = "egre";
-
             var actual = bookService.GetAllByQuery(query);
 
-            Assert.Collection(actual, book => Assert.Equal(2, book.Id));
+            Assert.Collection(actual, book=>Assert.Equal(2, book.Id));
         }
     }
 }
