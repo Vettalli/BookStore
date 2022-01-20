@@ -7,18 +7,25 @@ namespace BookStore.Memory
     {
         List<Book> books = new List<Book>
         {
-            new Book(1, "Andrew W. Troelsen", "c# programming book"),
-            new Book(2, "Rybakov", "Arbats' children")
+            new Book(1, "ISBN 12434-43532","Andrew W. Troelsen", "c# programming book"),
+            new Book(2, "ISBN 12434-96435","Rybakov", "Arbats' children")
         };
 
-        public List<Book> GetAllByTitle(string title)
+        public List<Book> GetAllByIsbn(string isbn)
         {
-            List<Book> foundBooks = new List<Book>(books);
+            return books.Where(book => book.Isbn == isbn).ToList();
+        }
 
-            if (title != null)
+        public List<Book> GetAllByTitleAndAuthor(string titleAndAuthor)
+        {
+            var foundBooks = new List<Book>();
+
+            if (titleAndAuthor == null)
             {
-                foundBooks = books.Where(book => book.Title.Contains(title)).ToList(); 
+                return foundBooks;
             }
+
+            foundBooks = books.Where(book => book.Author.Contains(titleAndAuthor) || book.Title.Contains(titleAndAuthor)).ToList();
 
             return foundBooks;
         }
