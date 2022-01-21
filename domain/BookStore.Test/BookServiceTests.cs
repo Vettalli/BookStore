@@ -12,8 +12,8 @@ namespace BookStore.Test
         public void GetAllByQuery_WithIsbn_CallsGetByIsbn()
         {
             var bookRepositoryStub = new Mock<IBookRepository>();
-            bookRepositoryStub.Setup(x => x.GetAllByIsbn(It.IsAny<string>())).Returns(new List<Book> { new Book(1,"","","")});
-            
+            bookRepositoryStub.Setup(x => x.GetAllByIsbn(It.IsAny<string>())).Returns(new List<Book> { new Book(1, "", "", "", "", 0m) });
+
             var bookService = new BookService(bookRepositoryStub.Object);
             var isbn = "ISBN 12345-12345";
 
@@ -28,13 +28,14 @@ namespace BookStore.Test
         public void GetAllByQuery_WithTitleOrAuthor_CallsGetByTitleOrAuthor()
         {
             var bookRepositoryStub = new Mock<IBookRepository>();
-            bookRepositoryStub.Setup(x=>x.GetAllByTitleAndAuthor(It.IsAny<string>())).Returns(new List<Book> { new Book(2, "", "", "") });
+            bookRepositoryStub.Setup(x => x.GetAllByTitleAndAuthor(It.IsAny<string>())).Returns(new List<Book> { new Book(2, "","","","",0m)});
 
-            var query = "srlg";
+            var query = "rgal";
+
             var bookService = new BookService(bookRepositoryStub.Object);
             var actual = bookService.GetAllByQuery(query);
 
-            Assert.Collection(actual, book=>Assert.Equal(2, book.Id));
+            Assert.Collection(actual, book => Assert.Equal(2, book.Id));
         }
     }
 }
