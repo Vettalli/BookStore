@@ -26,21 +26,15 @@ namespace BookStore.Memory
                 return foundBooks;
             }
 
-            foreach(var book in books)
-            {
-                book.Author.ToLower();
-                book.Title.ToLower();                   
-            }
-
-            foundBooks = books.Where(book => book.Author.Contains(titleAndAuthor)
-                                          || book.Title.Contains(titleAndAuthor))
-                              .ToList();
+            foundBooks = books.Where(book => book.Author.ToLower().Contains(titleAndAuthor) 
+                                          || book.Title.ToLower().Contains(titleAndAuthor))
+                                                 .ToList();
 
             return foundBooks;
         }
 
         public Book GetById(int id)
-        {           
+        {
             return books.Single(book => book.Id == id);
         }
     }
