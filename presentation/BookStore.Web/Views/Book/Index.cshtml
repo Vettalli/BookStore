@@ -2,11 +2,15 @@
 
 @{
     ViewData["Title"] = Model.Title;
-}
+ }
 
 <h1>@Model.Title</h1>
 
-<p>Author <strong>@Model.Author</strong></p>
-<p>Description <strong>@Model.Description</strong></p>
-<p>Price <strong>@Model.Price</strong></p>
+<p><strong>@Model.Author</strong></p>
+<p><strong>@Model.Description</strong></p>
+<p><strong>Price @Model.Price</strong></p>
 
+<form action="@Url.Action("Add", "Cart")" method="post">
+    <input type="hidden" name="id" value="@Model.Id"/>
+    <button class ="btn btn-outline-success" type="submit">Add to cart</button>
+</form>

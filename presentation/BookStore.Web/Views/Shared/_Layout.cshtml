@@ -11,10 +11,29 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Internet book store</a>
-            <form class="form-inline my-2 my-lg-2" action="@Url.Action("Index","Search")" method="get">
-                <input class="form-control mr-sm-2" type ="search" name="query" placeholder="Author or text" value ="">
-                <button class="btn btn-outline-success my-2 my-sm-0"  type = "submit">Search</button>
+            <form class="form-inline my-2 my-lg-2" action="@Url.Action("Index", "Search")" method="get">
+                <input class="form-control mr-sm-2" type="search" name="query" value="" placeholder="Write title or author's name"/>
+                <button class="btn btn-outline-success my-2 my-sm-0" type ="submit">Search</button>
             </form>
+            <span class="navbar-text ml-auto">
+                @{
+                    Cart cart;
+
+                    if(!Context.Session.TryGetCart(out cart))
+                    {
+                        cart = new Cart();
+                    }
+
+                    if (cart.Items.Count == 0)
+                    {
+                        @:Your cart is empty
+                    }
+                    else 
+                    {
+                        @:You have added @cart.Items.Count on sum cost - @cart.SumCost $    
+                    }
+                }
+            </span>
         </nav>
     </header>
     <div class="container">
