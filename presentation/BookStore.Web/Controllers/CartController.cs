@@ -1,9 +1,5 @@
 ﻿using BookStore.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookStore.Web.Controllers
 {
@@ -21,7 +17,7 @@ namespace BookStore.Web.Controllers
             var book = _bookRepository.GetById(id);
 
             Cart cart;
-
+            //Если cart есть, то она загружается. Если в сессии её нет, то создаем пустую новую.
             if(!HttpContext.Session.TryGetCart(out cart))
             {
                 cart = new Cart();

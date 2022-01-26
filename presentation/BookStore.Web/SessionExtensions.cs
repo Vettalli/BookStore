@@ -43,6 +43,7 @@ namespace BookStore.Web
 
         public static bool TryGetCart(this ISession session, out Cart value)
         {
+            //Проверяем, если есть значение с таким ключом, то массив байтов будет записан в переменную buffer
             if (session.TryGetValue(key, out byte[] buffer))
             {
                 using (var stream = new MemoryStream(buffer))
