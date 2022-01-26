@@ -1,11 +1,7 @@
 ﻿using BookStore.Web.Models;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BookStore.Web
 {
@@ -13,13 +9,14 @@ namespace BookStore.Web
     {
         private const string key = "Cart";
 
+        //Сохраняет значение корзины в сессии
         public static void Set(this ISession session, Cart value)
         {
             if (value == null)
             {
                 return;
             }
-
+            
             //class MemoryStream Этот класс обеспечивает произвольный доступ к данным, хранящимся в памяти, а не в физическом файле.
             //С помощью него можно записать последовательность байтов в область памяти
             //Поток - последовательность байтов, которые можно записать на диск или в память
@@ -40,7 +37,7 @@ namespace BookStore.Web
 
                 writer.Write(value.SumCost);
 
-                session.Set(key, stream.ToArray());  //ToArray() возвращает массив байтов
+                session.Set(key, stream.ToArray());  //ToArray() возвращает массив байтов. Устанавливает по ключу key значение, которое представляет массив байтов
             }
         }
 
