@@ -6,34 +6,36 @@ namespace BookStore.Web.Controllers
     public class CartController : Controller
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CartController(IBookRepository bookRepository)
+        public CartController(IBookRepository bookRepository, IOrderRepository orderRepository)
         {
             _bookRepository = bookRepository;
+            _orderRepository = orderRepository;
         }
 
         public IActionResult Add(int id)
         {
-            var book = _bookRepository.GetById(id);
-
             Cart cart;
+            Order order;
             //Если cart есть, то она загружается. Если в сессии её нет, то создаем пустую новую.
-            if(!HttpContext.Session.TryGetCart(out cart))
+            if(HttpContext.Session.TryGetCart(out cart))
             {
-                cart = new Cart();
-            }
-
-            if (cart.Items.ContainsKey(id))
-            {
-                cart.Items[id]++;                
+                order = _orderRepository.GetById(cart.OrderId);
             }
             else
             {
-                cart.Items[id] = 1;
+                order = _orderRepository.Create();
+                cart = new Cart(order.Id);
             }
 
-            cart.SumCost += book.Price;
+            var book = _bookRepository.GetById(id);
+            order.AddItem(book, 1);
+            _orderRepository.Update(order);
 
+
+            cart.TotalCount = order.TotalAmount;
+            cart.TotalPrice = order.TotalPrice;
             HttpContext.Session.Set(cart);
 
             return RedirectToAction("Index", "Book", new { id });

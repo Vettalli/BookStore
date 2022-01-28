@@ -27,15 +27,9 @@ namespace BookStore.Web
                 //типы данных в компактном двоичном формате. 
             using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
             {
-                writer.Write(value.Items.Count);
-
-                foreach(var item in value.Items)
-                {
-                    writer.Write(item.Key);
-                    writer.Write(item.Value);
-                }
-
-                writer.Write(value.SumCost);
+                writer.Write(value.OrderId);
+                writer.Write(value.TotalCount);
+                writer.Write(value.TotalPrice);
 
                 session.Set(key, stream.ToArray());  //ToArray() возвращает массив байтов. Устанавливает по ключу key значение, которое представляет массив байтов
             }
@@ -49,21 +43,17 @@ namespace BookStore.Web
                 using (var stream = new MemoryStream(buffer))
                 using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
                 {
-                    value = new Cart();
+                    var orderId = reader.ReadInt32();
+                    var totalCount = reader.ReadInt32();
+                    var totalPrice = reader.ReadDecimal();
 
-                    //читаем длину массива
-                    var length = reader.ReadInt32();
-                    //читаем пару целых значений
-                    for(int i=0; i<length; i++)
+
+                    value = new Cart(orderId)
                     {
-                        var bookId = reader.ReadInt32();
-                        var count = reader.ReadInt32();
+                        TotalCount = totalCount,
+                        TotalPrice = totalPrice
+                    };
 
-                        value.Items.Add(bookId, count);
-                    }
-
-                    value.SumCost = reader.ReadDecimal();
-                    
                     return true;
                 }               
             }

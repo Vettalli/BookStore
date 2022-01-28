@@ -16,21 +16,14 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type ="submit">Search</button>
             </form>
             <span class="navbar-text ml-auto">
-                @{
-                    Cart cart;
-
-                    if(!Context.Session.TryGetCart(out cart))
+                @{                   
+                    if(Context.Session.TryGetCart(out Cart cart) && cart.TotalCount>0)
                     {
-                        cart = new Cart();
+                                <a href="">You have added @cart.TotalCount on sum cost - @cart.TotalPrice $</a>    
                     }
-
-                    if (cart.Items.Count == 0)
+                    else
                     {
                         @:Your cart is empty
-                    }
-                    else 
-                    {
-                        @:You have added @cart.Items.Count on sum cost - @cart.SumCost $    
                     }
                 }
             </span>
