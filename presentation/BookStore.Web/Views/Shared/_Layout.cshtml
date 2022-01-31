@@ -16,10 +16,10 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type ="submit">Search</button>
             </form>
             <span class="navbar-text ml-auto">
-                @{                   
-                    if(Context.Session.TryGetCart(out Cart cart) && cart.TotalCount>0)
+                @{
+                    if (Context.Session.TryGetCart(out Cart cart) && cart.TotalCount > 0) 
                     {
-                                <a href="">You have added @cart.TotalCount on sum cost - @cart.TotalPrice $</a>    
+                        <a href="@Url.Action("Index", "Order")">The amount of items - @cart.TotalCount, Total price is @cart.TotalPrice</a>
                     }
                     else
                     {

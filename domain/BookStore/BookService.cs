@@ -21,6 +21,6 @@ namespace BookStore
             }
 
             return _bookRepository.GetAllByTitleAndAuthor(query);
-        }
+        }        
     }
 }

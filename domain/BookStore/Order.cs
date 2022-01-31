@@ -9,12 +9,9 @@ namespace BookStore
         public int Id { get; }
 
         private List<OrderItem> _items;
-        public IReadOnlyCollection<OrderItem> Items 
-        {
-            get => _items;
-        }
+        public IReadOnlyCollection<OrderItem> Items { get => _items; }
 
-        public int TotalAmount 
+        public int TotalAmount
         {
             get => _items.Sum(item => item.Count);
         }
