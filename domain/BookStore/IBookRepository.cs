@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace BookStore
 {
@@ -9,5 +7,6 @@ namespace BookStore
         List<Book> GetAllByIsbn(string isbn);
         List<Book> GetAllByTitleAndAuthor(string titleAndAuthor);
         Book GetById(int id);
+        List<Book> GetAllByIds(IEnumerable<int> id);
     }
 }

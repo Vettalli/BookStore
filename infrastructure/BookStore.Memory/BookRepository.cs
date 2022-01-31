@@ -11,6 +11,17 @@ namespace BookStore.Memory
             new Book(2, "ISBN 12434-96435","Rybakov", "Arbats' children", "Book about hard core life in Sovok", 99.99m)
         };
 
+        public List<Book> GetAllByIds(IEnumerable<int> bookIds)
+        {
+            var foundBooks = from book in books
+                             join bookId in bookIds on book.Id equals bookId
+                             select book;
+
+            var test = books.Where(book => bookIds.Contains(book.Id)).ToList();
+
+            return foundBooks.ToList();
+        }
+
         public List<Book> GetAllByIsbn(string isbn)
         {
             return books.Where(book => book.Isbn == isbn).ToList();
