@@ -58,16 +58,16 @@ namespace BookStore.Web.Controllers
 
         private OrderModel Map(Order order)
         {
-            var bookIds = order.Items.Select(i => i.BookId);
+            var bookIds = order.Items.Select(item => item.BookId);
             var books = _bookRepository.GetAllByIds(bookIds);
 
             var itemModels = from item in order.Items
                              join book in books on item.BookId equals book.Id
                              select new OrderItemModel
                              {
-                                 BookId = item.BookId,
-                                 Author = book.Author,
+                                 BookId = book.Id,
                                  Title = book.Title,
+                                 Author = book.Author,
                                  Count = item.Count,
                                  Price = item.Price
                              };

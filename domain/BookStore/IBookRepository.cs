@@ -7,6 +7,6 @@ namespace BookStore
         List<Book> GetAllByIsbn(string isbn);
         List<Book> GetAllByTitleAndAuthor(string titleAndAuthor);
         Book GetById(int id);
-        List<Book> GetAllByIds(IEnumerable<int> id);
+        List<Book> GetAllByIds(IEnumerable<int> bookIds);
     }
 }
