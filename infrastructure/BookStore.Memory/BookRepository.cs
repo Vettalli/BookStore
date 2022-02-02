@@ -32,16 +32,15 @@ namespace BookStore.Memory
         public List<Book> GetAllByTitleAndAuthor(string titleAndAuthor)
         {
             var foundBooks = new List<Book>();
-            titleAndAuthor = titleAndAuthor.ToLower();
-
+            
             if (titleAndAuthor == null)
             {
                 return foundBooks;
             }
 
-            foundBooks = books.Where(book => book.Author.ToLower().Contains(titleAndAuthor) 
-                                          || book.Title.ToLower().Contains(titleAndAuthor))
-                                                 .ToList();
+            foundBooks = books.Where(book => book.Author.ToLower().Contains(titleAndAuthor.ToLower()) 
+                                          || book.Title.ToLower().Contains(titleAndAuthor.ToLower()))
+                                                       .ToList();
 
             return foundBooks;
         }

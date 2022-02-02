@@ -15,6 +15,7 @@
             <th scope="col">Title</th>
             <th scope="col">Amount</th>
             <th scope="col">Price</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +27,12 @@
                 <td>@Model.Items[i].Title</td>
                 <td>@Model.Items[i].Count</td>
                 <td>@Model.Items[i].Price</td>
+                <td>
+                    <form class="form-inline" action="@Url.Action("RemoveItem", "Order")" method="post">
+                        <input type="hidden" name="bookId" value="@Model.Items[i].BookId" />
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>
