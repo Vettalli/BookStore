@@ -32,23 +32,74 @@ namespace BookStore
             _items = new List<OrderItem>(items);
         }
 
-        public void AddItem(Book book, int count)
+        public OrderItem GetItem(int bookId)
         {
-            if (book == null)
+            var index = _items.FindIndex(i => i.BookId == bookId);
+            
+            if(index == -1)
             {
-                throw new ArgumentNullException(nameof(book));
+                ThrowBookException("Book not found", bookId);
             }
 
-            var item = _items.SingleOrDefault(x => x.BookId == book.Id);
+            return _items[index];
+        }
 
-            if (item == null)
+        public void AddOrUpdateItem(Book book, int count)
+        {
+            ThrowBookNullException(book);
+
+            var index = _items.FindIndex(i => i.BookId == book.Id);
+
+            if (index == -1)
             {
                 _items.Add(new OrderItem(book.Id, count, book.Price));
             }
             else
             {
-                _items.Remove(item);
-                _items.Add(new OrderItem(book.Id, item.Count+count, book.Price));
+                _items[index].Count += count;
+            }            
+        }
+
+        public void RemoveItem(int bookId)
+        {
+            var index = _items.FindIndex(i => i.BookId == bookId);
+
+            if (index == -1)
+            {
+                ThrowBookException("Order doesn't contain specified item", bookId);
+            }
+
+            _items.RemoveAt(index);
+        }
+
+        public void AddBook(Book book)
+        {
+            ThrowBookNullException(book);
+
+            AddOrUpdateItem(book, 1);
+        }
+
+        public void RemoveBook(Book book)
+        {
+            ThrowBookNullException(book);
+
+            AddOrUpdateItem(book, -1); 
+        }             
+
+        private void ThrowBookException(string message, int bookId)
+        {
+            var exception = new InvalidOperationException(message);
+
+            exception.Data["BookId"] = bookId;
+
+            throw exception;
+        }
+
+        private void ThrowBookNullException(Book book)
+        {
+            if(book == null)
+            {
+                throw new ArgumentNullException(nameof(book));
             }
         }
     }
