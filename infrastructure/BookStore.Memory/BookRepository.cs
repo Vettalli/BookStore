@@ -11,8 +11,6 @@ namespace BookStore.Memory
             new Book(2, "ISBN 12434-96435","Rybakov", "Arbats' children", "Book about hard core life in Sovok", 99.99m)
         };
 
-        List<Book> comics = new List<Book>();
-
         public List<Book> GetAllByIds(IEnumerable<int> bookIds)
         {
             var foundBooks = from book in books
