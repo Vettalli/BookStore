@@ -8,5 +8,6 @@ namespace BookStore.Web.Models
         public List<OrderItemModel> Items { get; set; } = new List<OrderItemModel>();
         public int TotalCount { get; set; }
         public decimal TotalPrice { get; set; }
+        public Dictionary<string, string> Errors { get; set; } = new Dictionary<string, string>();
     }
 }

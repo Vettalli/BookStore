@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model ConfirmationModel
+
+@{
+    ViewData["Title"] = "Mobile phone verification";
+}
+
+<h1>Mobile phone verification</h1>
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Your code is @Context.Session.GetInt32(Model.CellPhone)</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">Close</button>
+</div>
+
+<form action="@Url.Action("StartDelivery")" method="post" >
+    <input type="hidden" name="id" value="@Model.OrderId"/>
+    <input type="hidden" name="cellPhone" value="@Model.CellPhone"/>
+    <div>
+        <label for="code">Code verification</label>
+        <input class="form-control" type="text" name="code" placeholder="0000"/>
+        @if (Model.Errors.ContainsKey("code")) 
+         {
+            <small class="form-text text-danger">@Model.Errors["code"]</small>
+         }        
+    </div>
+    <button type="submit">Verify code</button>
+</form>
+
+<form action="@Url.Action("SendConfirmationCode")" method="post">
+   <input type ="hidden" name="id" value="@Model.OrderId"/>
+    <div class="form-group">
+        <label for="@Model.CellPhone">Cell phone</label>
+        <input class ="form-control" type="text" name="cellPhone" value="@Model.CellPhone"/>
+    </div>
+    <button class="btn btn-success" type="submit">Send code again</button>
+</form>
