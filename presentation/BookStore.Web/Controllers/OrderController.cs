@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using BookStore.Messages;
+using System.Text.RegularExpressions;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace BookStore.Web.Controllers
 {
@@ -9,13 +13,16 @@ namespace BookStore.Web.Controllers
     {
         private readonly IBookRepository _bookRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly INotificationService _notificationService;
 
-        public OrderController(IBookRepository bookRepository, IOrderRepository orderRepository)
+        public OrderController(IBookRepository bookRepository, IOrderRepository orderRepository, INotificationService notificationService)
         {
             _bookRepository = bookRepository;
             _orderRepository = orderRepository;
+            _notificationService = notificationService;
         }
 
+        [HttpPost]
         public IActionResult AddItem(int bookId, int count = 1)
         {
             (Order order, Cart cart) = GetOrCreateOrderAndCart();
@@ -41,6 +48,7 @@ namespace BookStore.Web.Controllers
             return RedirectToAction("Index", "Order");
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             if(HttpContext.Session.TryGetCart(out Cart cart))
@@ -54,6 +62,7 @@ namespace BookStore.Web.Controllers
             return View("Empty");
         }
 
+        [HttpPost]
         public ActionResult RemoveItem(int bookId)
         {
             (Order order, Cart cart) = GetOrCreateOrderAndCart();
@@ -115,6 +124,76 @@ namespace BookStore.Web.Controllers
             cart.TotalPrice = order.TotalPrice;
 
             HttpContext.Session.Set(cart);
+        }
+
+        [HttpPost]
+        public IActionResult SendConfirmationCode(string cellPhone, int id)
+        {
+            var order = _orderRepository.GetById(id);
+            var model = Map(order);
+
+            if (!IsValidCellPhone(cellPhone))
+            {
+                model.Errors["cellPhone"] = "Your phone number doesn't fit to the standart +7XXXXXXXXXX";
+
+                return View("Index", model);
+            }
+
+            Random random = new Random();
+            var code = random.Next(1000, 9999);
+            HttpContext.Session.SetInt32(cellPhone, code);
+            _notificationService.SendNotificationCode(cellPhone, code);            
+
+            return View("Confirmation", new ConfirmationModel { OrderId = id, CellPhone = cellPhone});
+        }
+
+        private bool IsValidCellPhone(string cellPhone)
+        {
+            if (cellPhone == null)
+            {
+                return false;
+            }
+
+            cellPhone = cellPhone.Replace(" ", "")
+                                 .Replace("-", "");
+
+            return Regex.IsMatch(cellPhone, @"^\+?\d{11}$");
+        }
+
+        [HttpPost]
+        public IActionResult StartDelivery(int id, string cellPhone, int code)
+        {
+            int? storedCode = HttpContext.Session.GetInt32(cellPhone);
+
+            if (storedCode == null)
+            {
+                return View("Confirmation",
+                    new ConfirmationModel
+                    {
+                        OrderId = id,
+                        CellPhone = cellPhone,
+                        Errors = new Dictionary<string, string>
+                        {
+                            { "code", "The code not found! Try another code"}
+                        }
+                    });
+            }
+
+            if (storedCode != code)
+            {
+                return View("Confirmation",
+                    new ConfirmationModel
+                    {
+                        OrderId = id,
+                        CellPhone = cellPhone,
+                        Errors = new Dictionary<string, string>
+                        {
+                            {"code","This is not the right code!" }
+                        }
+                    });                
+            }
+
+            return View();
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using BookStore.Messages;
 
 namespace BookStore.Web
 {
@@ -31,6 +32,7 @@ namespace BookStore.Web
 
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
+            services.AddSingleton<INotificationService, DebugNotificationService>();
             services.AddSingleton<BookService>();            
         }
 
