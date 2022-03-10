@@ -9,6 +9,11 @@ namespace BookStore.Web
     {
         private const string key = "Cart";
 
+        public static void RemoveCart(this ISession session)
+        {
+            session.Remove(key);
+        }
+
         //Сохраняет значение корзины в сессии
         public static void Set(this ISession session, Cart value)
         {

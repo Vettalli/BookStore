@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System;
 using Microsoft.AspNetCore.Http;
 using BookStore.Contractors;
+using BookStore.Web.Contractors;
 
 namespace BookStore.Web.Controllers
 {
@@ -17,18 +18,21 @@ namespace BookStore.Web.Controllers
         private readonly INotificationService _notificationService;
         private readonly IEnumerable<IDeliverytService> _deliveryServices;
         private readonly IEnumerable<IPaymentService> _paymentServices;
-
+        private readonly IEnumerable<IWebContractorService> _webContractorServices;
+        
         public OrderController(IBookRepository bookRepository,
                                IOrderRepository orderRepository,
                                INotificationService notificationService,
                                IEnumerable<IDeliverytService> deliveryServices,
-                               IEnumerable<IPaymentService> paymentServices)
+                               IEnumerable<IPaymentService> paymentServices,
+                               IEnumerable<IWebContractorService> webContractorServices)
         {
             _bookRepository = bookRepository;
             _orderRepository = orderRepository;
             _notificationService = notificationService;
             _deliveryServices = deliveryServices;
             _paymentServices = paymentServices;
+            _webContractorServices = webContractorServices;
         }
 
         [HttpPost]
@@ -260,6 +264,13 @@ namespace BookStore.Web.Controllers
             var order = _orderRepository.GetById(id);
             var form = paymentService.CreateForm(order);
 
+            var webContractorService = _webContractorServices.SingleOrDefault(service=>service.UniqueCode==uniqueCode);
+
+            if (webContractorService != null)
+            {
+                return Redirect(webContractorService.GetUri);  //редирект на указанный URI (сайт оплаты)
+            }
+
             return View("PaymentStep", form);
         }
 
@@ -279,6 +290,13 @@ namespace BookStore.Web.Controllers
             }
 
             return View("PaymentStep", form);
+        }
+
+        public IActionResult Finish()
+        {
+            HttpContext.Session.RemoveCart();
+
+            return RedirectToAction("Index","Home");
         }
     }
 }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using BookStore.Messages;
 using BookStore.Contractors;
+using BookStore.Web.Contractors;
+using BookStore.YandexKass;
 
 namespace BookStore.Web
 {
@@ -36,6 +38,8 @@ namespace BookStore.Web
             services.AddSingleton<INotificationService, DebugNotificationService>();
             services.AddSingleton<IDeliverytService, PostmateDeliveryService>();
             services.AddSingleton<IPaymentService, CashPaymentService>();
+            services.AddSingleton<IWebContractorService, YandexKassaPaymentService>();
+            services.AddSingleton<IPaymentService, YandexKassaPaymentService>();
             services.AddSingleton<BookService>();
         }
 
@@ -66,6 +70,11 @@ namespace BookStore.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapAreaControllerRoute(
+                    name: "yandex.kassa",
+                    areaName: "YandexKassa",
+                    pattern: "YandexKassa/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

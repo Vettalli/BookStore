@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\domain\BookStore\BookStore.csproj" />
     <ProjectReference Include="..\..\infrastructure\BookStore.Memory\BookStore.Memory.csproj" />
+    <ProjectReference Include="..\..\plugins\BookStore.YandexKass\BookStore.YandexKass.csproj" />
+    <ProjectReference Include="..\BookStore.Web.Contractors\BookStore.Web.Contractors.csproj" />
   </ItemGroup>
 
   <ItemGroup>
