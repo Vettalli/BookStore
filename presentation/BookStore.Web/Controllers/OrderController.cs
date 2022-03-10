@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System;
 using Microsoft.AspNetCore.Http;
 using BookStore.Contractors;
+using BookStore.Web.Contractors;
 
 namespace BookStore.Web.Controllers
 {
@@ -15,14 +16,23 @@ namespace BookStore.Web.Controllers
         private readonly IBookRepository _bookRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly INotificationService _notificationService;
-        private readonly IEnumerable<IDeliveryService> _deliveryServices;
-
-        public OrderController(IBookRepository bookRepository, IOrderRepository orderRepository, INotificationService notificationService, IEnumerable<IDeliveryService> deliveryServices)
+        private readonly IEnumerable<IDeliverytService> _deliveryServices;
+        private readonly IEnumerable<IPaymentService> _paymentServices;
+        private readonly IEnumerable<IWebContractorService> _webContractorServices;
+        
+        public OrderController(IBookRepository bookRepository,
+                               IOrderRepository orderRepository,
+                               INotificationService notificationService,
+                               IEnumerable<IDeliverytService> deliveryServices,
+                               IEnumerable<IPaymentService> paymentServices,
+                               IEnumerable<IWebContractorService> webContractorServices)
         {
             _bookRepository = bookRepository;
             _orderRepository = orderRepository;
             _notificationService = notificationService;
             _deliveryServices = deliveryServices;
+            _paymentServices = paymentServices;
+            _webContractorServices = webContractorServices;
         }
 
         [HttpPost]
@@ -196,6 +206,10 @@ namespace BookStore.Web.Controllers
                     });                
             }
 
+            var order = _orderRepository.GetById(id);
+            order.CellPhone = cellPhone;
+            _orderRepository.Update(order);
+
             HttpContext.Session.Remove(cellPhone);
 
             var model = new DeliveryModel
@@ -221,15 +235,68 @@ namespace BookStore.Web.Controllers
         [HttpPost]
         public IActionResult NextDelivery(int id, string uniqueCode, int step, Dictionary<string, string> values)
         {
-            var deliveryService = _deliveryServices.Single(service=>service.UniqueCode==uniqueCode);
-            var form = deliveryService.MoveNext(id, step, values);
+            var deliveryService = _deliveryServices.Single(service => service.UniqueCode == uniqueCode);
+            var form = deliveryService.MoveNextForm(id, step, values);
 
             if (form.IsFinal)
             {
-                return null;
+                var order = _orderRepository.GetById(id);
+                var delivery = _deliveryServices.Single(service=>service.UniqueCode==uniqueCode).GetDelivery(form);
+                _orderRepository.Update(order);
+
+                var model = new DeliveryModel
+                {
+                    OrderId = id,
+                    Methods = _paymentServices.ToDictionary(service => service.UniqueCode,
+                                                         service => service.Title)
+                };
+
+                return View("PaymentMethod", model); ;
             }
 
             return View("DeliveryStep", form);
+        }
+
+        [HttpPost]
+        public IActionResult StartPayment(int id, string uniqueCode)
+        {
+            var paymentService = _paymentServices.Single(service => service.UniqueCode == uniqueCode);
+            var order = _orderRepository.GetById(id);
+            var form = paymentService.CreateForm(order);
+
+            var webContractorService = _webContractorServices.SingleOrDefault(service=>service.UniqueCode==uniqueCode);
+
+            if (webContractorService != null)
+            {
+                return Redirect(webContractorService.GetUri);  //редирект на указанный URI (сайт оплаты)
+            }
+
+            return View("PaymentStep", form);
+        }
+
+        [HttpPost]
+        public IActionResult NextPayment(int id, string uniqueCode, int step, Dictionary<string, string> values)
+        {
+            var paymentService = _paymentServices.Single(service => service.UniqueCode == uniqueCode);
+            var form = paymentService.MoveNextForm(id, step, values);
+
+            if (form.IsFinal)
+            {
+                var order = _orderRepository.GetById(id);
+                var delivery = _paymentServices.Single(service => service.UniqueCode == uniqueCode).GetPayment(form);
+                _orderRepository.Update(order);
+
+                return View("Finish");
+            }
+
+            return View("PaymentStep", form);
+        }
+
+        public IActionResult Finish()
+        {
+            HttpContext.Session.RemoveCart();
+
+            return RedirectToAction("Index","Home");
         }
     }
 }

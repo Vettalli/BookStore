@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BookStore.Contractors
 {
-    public class PostmateDeliveryService : IDeliveryService
+    public class PostmateDeliveryService : IDeliverytService
     {
         private IReadOnlyDictionary<string, string> cities = new Dictionary<string, string>
         {
@@ -37,6 +38,29 @@ namespace BookStore.Contractors
 
         public string Title => "Delivery from somewhere to nowhere";
 
+        public OrderDelivery GetDelivery(Form form)
+        {
+            if(!form.IsFinal || form.UniqueCode != UniqueCode)
+            {
+                throw new InvalidOperationException("Invalid form");
+            }
+
+            var cityId = form.Fields.Single(field=>field.Title=="city").Value;
+            var cityTitle = cities[cityId];
+            var postmateId = form.Fields.Single(field=>field.Title=="postmate").Value;
+            var postmateTitle = postmates[cityId][postmateId];
+            var parameters = new Dictionary<string, string>
+            {
+                { nameof(cityId), cityId},
+                { nameof(cityTitle), cityTitle},
+                { nameof(postmateId), postmateId},
+                { nameof(postmateTitle), postmateTitle }
+            };
+            var description = $"City : {cityTitle}\nLocker : {postmateTitle}";
+
+            return new OrderDelivery (UniqueCode, description, 2.99m, parameters);
+        }
+
         public Form CreateForm(Order order)
         {
             if (order == null)
@@ -50,7 +74,7 @@ namespace BookStore.Contractors
             });
         }
 
-        public Form MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values)
+        public Form MoveNextForm(int orderId, int step, IReadOnlyDictionary<string, string> values)
         {
             if (step == 1)
             {

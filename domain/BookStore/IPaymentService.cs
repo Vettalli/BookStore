@@ -2,7 +2,7 @@
 
 namespace BookStore.Contractors
 {
-    public interface IDeliverytService
+    public interface IPaymenttService
     {
         string UniqueCode { get; }
 
@@ -12,6 +12,6 @@ namespace BookStore.Contractors
 
         Form MoveNextForm(int orderId, int step, IReadOnlyDictionary<string, string> values);
 
-        OrderDelivery GetDelivery(Form form); //Сюда передаётся форма после последнего шага заполнения(IsFinal==true)
+        OrderPayment GetPayment(Form form);
     }
 }
