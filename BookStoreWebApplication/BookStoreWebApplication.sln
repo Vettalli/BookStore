@@ -21,7 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookStore.Web.Contractors",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plugins", "plugins", "{F9D08AF7-26E0-421E-A962-2243C7D1A0A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.YandexKass", "..\plugins\BookStore.YandexKass\BookStore.YandexKass.csproj", "{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookStore.YandexKass", "..\plugins\BookStore.YandexKass\BookStore.YandexKass.csproj", "{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "application", "application", "{6D335BC7-10BE-4178-88A4-3B95D4CAD5B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Web.App", "..\application\BookStore.Web.App\BookStore.Web.App.csproj", "{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +57,10 @@ Global
 		{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +72,7 @@ Global
 		{D1303E7B-7B7A-478F-86F3-AED931B2C588} = {9EE6716F-23B4-4CF6-98CF-7AA3BBA4AA0F}
 		{495CC07B-36CD-457B-B592-BB78E06E933D} = {1F838811-C399-49D6-AFBF-4490A5BE719D}
 		{9F6FD69D-7CF6-4F4F-BDFF-3DE22A1A2049} = {F9D08AF7-26E0-421E-A962-2243C7D1A0A1}
+		{217E8A3E-1AC9-4C1B-8167-52B3C7C41E75} = {6D335BC7-10BE-4178-88A4-3B95D4CAD5B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FFD16943-343F-4C2D-8303-4CEC6B0558B3}
