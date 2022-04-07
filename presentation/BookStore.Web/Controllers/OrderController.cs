@@ -38,7 +38,7 @@ namespace BookStore.Web.Controllers
         [HttpPost]
         public IActionResult AddItem(int bookId, int count = 1)
         {
-            (Order order, Cart cart) = GetOrCreateOrderAndCart();
+            (Order order, Cart cart) = GetOrCreateOrderAndCart(); //test commit
 
             var book = _bookRepository.GetById(bookId);
 
