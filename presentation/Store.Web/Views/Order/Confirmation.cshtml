@@ -1,10 +1,17 @@
-﻿@model OrderModel
+﻿@using Microsoft.AspNetCore.Http
+
+@model OrderModel
 
 @{
     ViewData["Title"] = "Подтверждение мобильного";
 }
 
 <h1>Подтверждение мобильного</h1>
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Your code is @Context.Session.GetInt32(Model.CellPhone)</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">Close</button>
+</div>
 
 <p>
     Введите <em>код подтверждения</em> из SMS.

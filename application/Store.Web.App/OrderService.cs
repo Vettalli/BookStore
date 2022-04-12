@@ -150,7 +150,9 @@ namespace Store.Web.App
 
             if (TryFormatPhone(cellPhone, out string formattedPhone))
             {
-                var confirmationCode = 1111; // todo: random.Next(1000, 10000) = 1000, 1001, ..., 9998, 9999
+                Random rand = new Random();
+
+                var confirmationCode = rand.Next(1000, 9999); 
                 model.CellPhone = formattedPhone;
                 Session.SetInt32(formattedPhone, confirmationCode);
                 notificationService.SendConfirmationCode(formattedPhone, confirmationCode);
