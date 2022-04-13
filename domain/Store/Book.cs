@@ -1,41 +1,73 @@
-﻿using System.Text.RegularExpressions;
+﻿using Store.Data;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Store
 {
     public class Book
     {
-        public int Id { get; }
+        private readonly BookDto _dto;
 
-        public string Isbn { get; }
+        public int Id => _dto.Id;
 
-        public string Author { get; }
-
-        public string Title { get; }
-
-        public string Description { get; }
-
-        public decimal Price { get; }
-
-        public Book(int id, string isbn, string author, string title, string description, decimal price)
+        public string Isbn
         {
-            Id = id;
-            Isbn = isbn;
-            Author = author;
-            Title = title;
-            Description = description;
-            Price = price;
+            get => _dto.Isbn;
+            set => _dto.Isbn = value;
         }
 
-        public static bool IsIsbn(string s)
+        public string Author 
         {
-            if (s == null)
+            get => _dto.Author;
+            set => _dto.Author = value?.Trim();
+        }
+
+        public string Title 
+        { 
+            get => _dto.Title;
+            set 
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException(nameof(Title));
+                }
+
+                _dto.Title = value.Trim();
+            }
+        }
+
+        public string Description 
+        {
+            get => _dto.Description;
+            set => _dto.Description = value;
+        }
+
+        public decimal Price 
+        {
+            get => _dto.Price;
+            set => _dto.Price = value;
+        }
+
+        internal Book(BookDto dto)
+        {
+            _dto = dto;
+        }
+        
+        public static bool TryFormatIsbn(string isbn, out string formattedIsbn)
+        {
+            if (isbn == null)
+            {
+                formattedIsbn = null;
                 return false;
+            }
 
-            s = s.Replace("-", "")
-                 .Replace(" ", "")
-                 .ToUpper();
+            formattedIsbn = isbn.Replace("-", "")
+                                .Replace(" ", "")
+                                .ToUpper();
 
-            return Regex.IsMatch(s, @"^ISBN\d{10}(\d{3})?$");
+            return Regex.IsMatch(formattedIsbn, @"^ISBN\d{10}(\d{3})?&");
         }
+
+        public static bool IsIsbn(string s) => TryFormatIsbn(s, out string formattedIsbn);
     }
 }
