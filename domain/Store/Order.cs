@@ -1,29 +1,108 @@
-﻿using System.Collections.Generic;
+﻿using Store.Data;
 using System.Linq;
+using System;
 
 namespace Store
 {
     public class Order
     {
-        public int Id { get; }
+        private readonly OrderDto _dto;
+
+        public int Id => _dto.Id;
 
         public OrderItemCollection Items { get; }
 
-        public string CellPhone { get; set; }
+        public string CellPhone 
+        {
+            get => _dto.CellPhone;
+            set 
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException(nameof(CellPhone));
+                }
 
-        public OrderDelivery Delivery { get; set; }
+                _dto.CellPhone = value;
+            }
+        }
 
-        public OrderPayment Payment { get; set; }
+        public OrderDelivery Delivery 
+        {
+            get
+            {
+                if(_dto.DeliveryUniqueCode== null)
+                {
+                    return null;
+                }
+
+                return new OrderDelivery(
+                    _dto.DeliveryUniqueCode,
+                    _dto.DeliveryDescription,
+                    _dto.DeliveryPrice,
+                    _dto.DeliveryParameters);
+            }
+            set 
+            {
+                if(value == null)
+                {
+                    throw new ArgumentException(nameof(Delivery));
+                }
+
+                _dto.DeliveryUniqueCode = value.UniqueCode;
+                _dto.DeliveryDescription = value.Description;
+                _dto.DeliveryPrice = value.Price;
+                _dto.DeliveryParameters = value.Parameters.ToDictionary(p=>p.Key, p=>p.Value);
+            }
+        }
+
+        public OrderPayment Payment 
+        {
+            get
+            {
+                if (_dto.PaymentServiceName == null)
+                {
+                    return null;
+                }
+
+                return new OrderPayment(
+                    _dto.PaymentServiceName,
+                    _dto.PaymentDescription,
+                    _dto.PaymentParameters);
+            }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentException(nameof(Payment));
+                }
+
+                _dto.PaymentServiceName = value.UniqueCode;
+                _dto.PaymentDescription = value.Description;
+                _dto.PaymentParameters = value.Parameters.ToDictionary(p=>p.Key, p=>p.Value);
+            }
+        }
 
         public int TotalCount => Items.Sum(item => item.Count);
 
         public decimal TotalPrice => Items.Sum(item => item.Price * item.Count)
-                                   + (Delivery?.Amount ?? 0m);
+                                   + (Delivery?.Price ?? 0m);
 
-        public Order(int id, IEnumerable<OrderItem> items)
+        public Order(OrderDto dto)
         {
-            Id = id;
-            Items = new OrderItemCollection(items);
+            _dto = dto;
+            Items = new OrderItemCollection(dto);
+        }
+
+        public static class DtoFactory
+        {
+            public static OrderDto Create() => new OrderDto();
+        }
+
+        public static class Mapper
+        {
+            public static Order Map(OrderDto dto) => new Order(dto);
+
+            public static OrderDto Map(Order domain) => domain._dto;
         }
     }
 }
