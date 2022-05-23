@@ -1,61 +1,65 @@
-﻿using System.Text.RegularExpressions;
-using Store.Data;
+﻿using Store.Data;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Store
 {
     public class Book
     {
-        private readonly BookDto _dto;
+        private readonly BookDto dto;
 
-        public int Id => _dto.Id;
+        public int Id => dto.Id;
 
-        public string Isbn 
+        public string Isbn
         {
-            get => _dto.Isbn;
-            set 
+            get => dto.Isbn;
+            set
             {
-                if (TryIsbnFormat(value, out string formattedIsbn))
-                {
-                    _dto.Isbn = formattedIsbn;
-                }
+                if (TryFormatIsbn(value, out string formattedIsbn))
+                    dto.Isbn = formattedIsbn;
 
                 throw new ArgumentException(nameof(Isbn));
             }
         }
 
-        public string Author 
+        public string Author
         {
-            get => _dto.Author;
-            set => _dto.Author = value?.Trim();
+            get => dto.Author;
+            set => dto.Author = value?.Trim();
         }
 
-        public string Title 
+        public string Title
         {
-            get => _dto.Title;
-            set 
+            get => dto.Title;
+            set
             {
-                if (string.IsNullOrEmpty(value))
-                {
+                if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException(nameof(Title));
-                }
 
-                _dto.Title = value.Trim();
+                dto.Title = value.Trim();
             }
         }
 
-        public string Description { get; }
-
-        public decimal Price { get; }
-
-        public Book(BookDto dto)
+        public string Description
         {
-            _dto = dto;
+            get => dto.Description;
+            set => dto.Description = value;
         }
 
-        public static bool TryIsbnFormat(string isbn, out string formattedIsbn)
+        public decimal Price
         {
-            if(isbn == null)
+            get => dto.Price;
+            set => dto.Price = value;
+        }
+
+        internal Book(BookDto dto)
+        {
+            this.dto = dto;
+        }
+
+        public static bool TryFormatIsbn(string isbn, out string formattedIsbn)
+        {
+            if (isbn == null)
             {
                 formattedIsbn = null;
                 return false;
@@ -67,8 +71,9 @@ namespace Store
 
             return Regex.IsMatch(formattedIsbn, @"^ISBN\d{10}(\d{3})?$");
         }
-        
-        public static bool IsIsbn(string isbn) => TryIsbnFormat(isbn, out string _);
+
+        public static bool IsIsbn(string isbn)
+            => TryFormatIsbn(isbn, out _);
 
         public static class DtoFactory
         {
@@ -78,19 +83,13 @@ namespace Store
                                          string description,
                                          decimal price)
             {
-                if(TryIsbnFormat(isbn, out string formattedIsbn))
-                {
+                if (TryFormatIsbn(isbn, out string formattedIsbn))
                     isbn = formattedIsbn;
-                }
                 else
-                {
                     throw new ArgumentException(nameof(isbn));
-                }
-
-                if (string.IsNullOrEmpty(title))
-                {
+                
+                if (string.IsNullOrWhiteSpace(title))
                     throw new ArgumentException(nameof(title));
-                }
 
                 return new BookDto
                 {
@@ -98,16 +97,16 @@ namespace Store
                     Author = author?.Trim(),
                     Title = title.Trim(),
                     Description = description?.Trim(),
-                    Price = price
+                    Price = price,
                 };
             }
         }
 
-        public static class Mapper 
+        public static class Mapper
         {
             public static Book Map(BookDto dto) => new Book(dto);
 
-            public static BookDto Map(Book domain) => domain._dto;
+            public static BookDto Map(Book domain) => domain.dto;
         }
     }
 }

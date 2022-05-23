@@ -8,28 +8,31 @@ namespace Store
 {
     public class OrderItemCollection : IReadOnlyCollection<OrderItem>
     {
-        private readonly OrderDto _orderDto;
-
-        private readonly List<OrderItem> _items;
+        private readonly OrderDto orderDto;
+        private readonly List<OrderItem> items;
 
         public OrderItemCollection(OrderDto orderDto)
         {
             if (orderDto == null)
                 throw new ArgumentNullException(nameof(orderDto));
 
-            _items = orderDto.Items.Select(OrderItem.Mapper.Map     ).ToList();
+            this.orderDto = orderDto;
+
+            items = orderDto.Items
+                            .Select(OrderItem.Mapper.Map)
+                            .ToList();
         }
 
-        public int Count => _items.Count;
+        public int Count => items.Count;
 
         public IEnumerator<OrderItem> GetEnumerator()
         {
-            return _items.GetEnumerator();
+            return items.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return (_items as IEnumerable).GetEnumerator();
+            return (items as IEnumerable).GetEnumerator();
         }
 
         public OrderItem Get(int bookId)
@@ -42,14 +45,14 @@ namespace Store
 
         public bool TryGet(int bookId, out OrderItem orderItem)
         {
-            var index = _items.FindIndex(item => item.BookId == bookId);
+            var index = items.FindIndex(item => item.BookId == bookId);
             if (index == -1)
             {
                 orderItem = null;
                 return false;
             }
 
-            orderItem = _items[index];
+            orderItem = items[index];
             return true;
         }
 
@@ -58,26 +61,23 @@ namespace Store
             if (TryGet(bookId, out OrderItem orderItem))
                 throw new InvalidOperationException("Book already exists.");
 
-            var orderItemDto = OrderItem.DtoFactory.Create(_orderDto, bookId, price, count);
-            _orderDto.Items.Add(orderItemDto);
+            var orderItemDto = OrderItem.DtoFactory.Create(orderDto, bookId, price, count);
+            orderDto.Items.Add(orderItemDto);
 
             orderItem = OrderItem.Mapper.Map(orderItemDto);
-            _items.Add(orderItem);
+            items.Add(orderItem);
 
             return orderItem;
         }
 
         public void Remove(int bookId)
         {
-            var index = _items.FindIndex(book=>book.BookId==bookId);
+            var index = items.FindIndex(item => item.BookId == bookId);
+            if (index == -1)
+                throw new InvalidOperationException("Can't find book to remove from order.");
 
-            if(index == -1)
-            {
-                throw new InvalidOperationException("Can't find book");
-            }
-
-            _orderDto.Items.RemoveAt(index);
-            _items.RemoveAt(index);
+            orderDto.Items.RemoveAt(index);
+            items.RemoveAt(index);
         }
     }
 }

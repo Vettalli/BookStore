@@ -1,5 +1,5 @@
-﻿using Xunit;
-using Store.Data;
+﻿using Store.Data;
+using Xunit;
 
 namespace Store.Tests
 {
@@ -30,6 +30,14 @@ namespace Store.Tests
             Assert.Equal(0m, order.TotalCount);
         }
 
+        [Fact]
+        public void TotalCount_WithNonEmptyItems_CalcualtesTotalCount()
+        {
+            var order = CreateTestOrder();
+
+            Assert.Equal(3 + 5, order.TotalCount);
+        }
+
         private static Order CreateTestOrder()
         {
             return new Order(new OrderDto
@@ -37,18 +45,10 @@ namespace Store.Tests
                 Id = 1,
                 Items = new[]
                 {
-                    new OrderItemDto{ BookId = 1, Price = 10m, Count = 5},
-                    new OrderItemDto{ BookId = 2, Price = 20m, Count = 5}
+                    new OrderItemDto { BookId = 1, Price = 10m, Count = 3},
+                    new OrderItemDto { BookId = 2, Price = 100m, Count = 5},
                 }
             });
-        }
-
-        [Fact]
-        public void TotalCount_WithNonEmptyItems_CalcualtesTotalCount()
-        {
-            var order = CreateTestOrder();
-
-            Assert.Equal(5 + 5, order.TotalCount);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace Store.Tests
         {
             var order = CreateTestOrder();
 
-            Assert.Equal(5 * 10m + 5 * 20m, order.TotalPrice);
+            Assert.Equal(3 * 10m + 5 * 100m, order.TotalPrice);
         }
     }
 }

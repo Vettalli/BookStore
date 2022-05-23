@@ -1,86 +1,78 @@
 ﻿using Store.Data;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace Store
 {
     public class Order
     {
-        private readonly OrderDto _dto;
+        private readonly OrderDto dto;
 
-        public int Id => _dto.Id;
+        public int Id => dto.Id;
 
-        public OrderItemCollection Items { get; }
-
-        public string CellPhone 
+        public string CellPhone
         {
-            get => _dto.CellPhone;
-            set 
+            get => dto.CellPhone;
+            set
             {
-                if (string.IsNullOrEmpty(value))
-                {
+                if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException(nameof(CellPhone));
-                }
 
-                _dto.CellPhone = value;
+                dto.CellPhone = value;
             }
         }
 
-        public OrderDelivery Delivery 
+        public OrderDelivery Delivery
         {
             get
             {
-                if(_dto.DeliveryUniqueCode== null)
-                {
+                if (dto.DeliveryUniqueCode == null)
                     return null;
-                }
 
                 return new OrderDelivery(
-                    _dto.DeliveryUniqueCode,
-                    _dto.DeliveryDescription,
-                    _dto.DeliveryPrice,
-                    _dto.DeliveryParameters);
-            }
-            set 
-            {
-                if(value == null)
-                {
-                    throw new ArgumentException(nameof(Delivery));
-                }
-
-                _dto.DeliveryUniqueCode = value.UniqueCode;
-                _dto.DeliveryDescription = value.Description;
-                _dto.DeliveryPrice = value.Price;
-                _dto.DeliveryParameters = value.Parameters.ToDictionary(p=>p.Key, p=>p.Value);
-            }
-        }
-
-        public OrderPayment Payment 
-        {
-            get
-            {
-                if (_dto.PaymentServiceName == null)
-                {
-                    return null;
-                }
-
-                return new OrderPayment(
-                    _dto.PaymentServiceName,
-                    _dto.PaymentDescription,
-                    _dto.PaymentParameters);
+                    dto.DeliveryUniqueCode,
+                    dto.DeliveryDescription,
+                    dto.DeliveryPrice,
+                    dto.DeliveryParameters);
             }
             set
             {
                 if (value == null)
-                {
-                    throw new ArgumentException(nameof(Payment));
-                }
+                    throw new ArgumentException(nameof(Delivery));
 
-                _dto.PaymentServiceName = value.UniqueCode;
-                _dto.PaymentDescription = value.Description;
-                _dto.PaymentParameters = value.Parameters.ToDictionary(p=>p.Key, p=>p.Value);
+                dto.DeliveryUniqueCode = value.UniqueCode;
+                dto.DeliveryDescription = value.Description;
+                dto.DeliveryPrice = value.Price;
+                dto.DeliveryParameters = value.Parameters
+                                              .ToDictionary(p => p.Key, p => p.Value);
             }
         }
+
+        public OrderPayment Payment
+        {
+            get
+            {
+                if (dto.PaymentServiceName == null)
+                    return null;
+
+                return new OrderPayment(
+                    dto.PaymentServiceName,
+                    dto.PaymentDescription,
+                    dto.PaymentParameters);
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentException(nameof(Payment));
+
+                dto.PaymentServiceName = value.UniqueCode;
+                dto.PaymentDescription = value.Description;
+                dto.PaymentParameters = value.Parameters
+                                             .ToDictionary(p => p.Key, p => p.Value);
+            }
+        }
+
+        public OrderItemCollection Items { get; }
 
         public int TotalCount => Items.Sum(item => item.Count);
 
@@ -89,7 +81,7 @@ namespace Store
 
         public Order(OrderDto dto)
         {
-            _dto = dto;
+            this.dto = dto;
             Items = new OrderItemCollection(dto);
         }
 
@@ -102,7 +94,7 @@ namespace Store
         {
             public static Order Map(OrderDto dto) => new Order(dto);
 
-            public static OrderDto Map(Order domain) => domain._dto;
+            public static OrderDto Map(Order domain) => domain.dto;
         }
     }
 }
